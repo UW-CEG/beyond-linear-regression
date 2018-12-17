@@ -196,7 +196,7 @@ MultiNomMod <- multinom(Dominator ~ CourseGrade + Ethnicity +
 # Generate a table that describes the log-odds for each value of each response for level of each predictor
   # This is what we would get without the proportional odds assumption
   
-  (s <- with(dominator, summary(as.numeric(Dominator) ~ CourseGrade + Ethnicity + ActivityType, fun=sf)))
+  (s <- with(polrDat, summary(as.numeric(Dominator) ~ CourseGrade + Ethnicity + ActivityType, fun=sf)))
   
   # for the assumption to be met, the difference between Y>=2 values and Y>=3 values 
   # should be the same as the difference between Y>=3 vs Y>=4; 

@@ -7,3 +7,6 @@ Below are instructions for implementing some aspects of the Github workflow as w
 2. Create a folder called `USERNAME-work`
 3. Copy the code and data files for binomial and logistic regression into your new folder.
 4. Create a new pull request to have the changes you made on your branch pulled into the main branch.
+
+
+testing the pull request template in test branch!

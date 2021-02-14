@@ -236,6 +236,8 @@ pR2(mod1)
 # For Cox and Snell and Nagelkerke pseudo-R2:
 r2(mod1)
 
+# 2021-02-13: None of the code below worked for me. Rewrite the plotting lines with ggplot2
+
 # For Tjur's D:
 cod(mod1)
 

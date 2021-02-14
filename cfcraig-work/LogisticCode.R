@@ -29,14 +29,19 @@ library(car) # this is a package to help test the assumptions
 library(effects) # this is a package to help interpret results
 library(pscl) # this package is useful for evaluating model fit
 library(sjstats) # this package is useful for evaluating model fit
-
+library(here)
 
 #############################
 ### Set working Directory ###
 #############################
 
 #change setwd to folder where data is saved on your computer
-setwd("")
+# setwd("")
+
+# Use the `here` package to implement relative directory paths
+master_dir = here()
+
+proj_dir = paste0(master_dir, "/cfcraig-work")
 
 
 ###################################

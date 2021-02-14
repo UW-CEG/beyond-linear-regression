@@ -41,14 +41,14 @@ library(here)
 # Use the `here` package to implement relative directory paths
 master_dir = here()
 
-proj_dir = paste0(master_dir, "/cfcraig-work")
+proj_dir = paste0(master_dir, "/cfcraig-work/")
 
 
 ###################################
 ### Load, Check, and Clean Data ###
 ###################################
 
-logisticData <- read.csv("logisticData.csv",header=T)
+logisticData <- read.csv(paste0(proj_dir, "LogisticData.csv"), header=T)
   names(logisticData)
 
 # Dataset contains the following 7 variables:

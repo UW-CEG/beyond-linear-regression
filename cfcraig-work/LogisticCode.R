@@ -29,37 +29,49 @@ library(car) # this is a package to help test the assumptions
 library(effects) # this is a package to help interpret results
 library(pscl) # this package is useful for evaluating model fit
 library(sjstats) # this package is useful for evaluating model fit
-
+library(here)
 
 #############################
 ### Set working Directory ###
 #############################
 
 #change setwd to folder where data is saved on your computer
-setwd("")
+# setwd("")
+
+# Use the `here` package to implement relative directory paths
+master_dir = here()
+
+proj_dir = paste0(master_dir, "/cfcraig-work/")
 
 
 ###################################
 ### Load, Check, and Clean Data ###
 ###################################
 
-logisticData <- read.csv("logisticData.csv",header=T)
+logisticData <- read.csv(paste0(proj_dir, "LogisticData.csv"), header=T)
   names(logisticData)
 
 # Dataset contains the following 7 variables:
-  # interest: a numeric scale score indicating a student's interest in using mathematics to understand biology; range from 1 (low) - 7 (high)
-  # utility: a numeric scale score indicating a student's perceptions of how useful mathematics is to their life science career; range from 1 (low) - 7 (high)
-  # cost: a numeric scale score indicating a student's anxiety/worry over incorporating mathematics into their biology courses; range from 1 (low) - 7 (high)
-  # course: a binary variable indicating whether a student reports being unlikely (0) or likely (1) to take an elective mathematical modeling course
+  # interest: a numeric scale score indicating a student's interest in using mathematics 
+      # to understand biology; range from 1 (low) - 7 (high)
+  # utility: a numeric scale score indicating a student's perceptions of how useful 
+      # mathematics is to their life science career; range from 1 (low) - 7 (high)
+  # cost: a numeric scale score indicating a student's anxiety/worry over incorporating 
+      # mathematics into their biology courses; range from 1 (low) - 7 (high)
+  # course: a binary variable indicating whether a student reports being unlikely (0) 
+      # or likely (1) to take an elective mathematical modeling course
   # gender: a binary variable indicating whether a student is male (M) or female (F)
   # year: a categorical variable indicating a student's year in college: 1, 2, 3, or 4
-  # high.math: a categorical variable indicating the highest high school math course a student took: calculus (Calc), pre-calculus (pCalc), algebra (Alg), or statistics (Stats)
+  # high.math: a categorical variable indicating the highest high school math course 
+      # a student took: calculus (Calc), pre-calculus (pCalc), algebra (Alg), or statistics (Stats)
 
 #Examine data structure
 str(logisticData)
-  # you can see that R considers the binary variable "course" to be an integer ("int") - it's actually categorical, so we need to change that
+   # you can see that R considers the binary variable "course" to be an integer ("int") - 
+      # it's actually categorical, so we need to change that
   # you can also see that year in school (year) is considered to be integer, but this too should be categorical
-  # finally, you can see that gender and highest high school math (high.math) are factors, but we'll need to make sure we set a meaningful reference level for comparison
+  # finally, you can see that gender and highest high school math (high.math) are factors, 
+      # but we'll need to make sure we set a meaningful reference level for comparison
 
 #specify the binary variable as factor with 0 as reference variable
 logisticData$course <- factor(logisticData$course,levels=c(0,1))
@@ -80,9 +92,11 @@ summary(logisticData$course)
 table(logisticData$gender, logisticData$course)
 table(logisticData$year, logisticData$course)
 table(logisticData$high.math, logisticData$course)
-# Only a few students with algebra or stats as their highest high school math course, but we'll nevertheless look at it in our model for this exercise
+# Only a few students with algebra or stats as their highest high school math course, 
+    # but we'll nevertheless look at it in our model for this exercise
 
-# Caveats - this code does not do the following things, which are worth taking the time to do with any data set before conducting analyses:
+# Caveats - this code does not do the following things, which are worth taking the time to do 
+    # with any data set before conducting analyses:
   # looking for outliers and checking multicollinearity between predictors
   # removing observations with NAs
   # making lots of different visual plots of the data to become familiar with it
@@ -92,7 +106,8 @@ table(logisticData$high.math, logisticData$course)
 ### Fit model ###
 #################
 
-#Predict reporting being likely to take a mathematical modeling course based on interest, utility value, cost, gender, year in school, and highest high school math course taken
+#Predict reporting being likely to take a mathematical modeling course based on interest, 
+    # utility value, cost, gender, year in school, and highest high school math course taken
 mod1 <- glm(course ~ interest + utility + cost + gender + year + high.math,
          data=logisticData, family=binomial(link="logit"))
 summary(mod1)
@@ -116,8 +131,9 @@ scatter.smooth(logisticData$interest, logit(pred.prob)) #looks good
 scatter.smooth(logisticData$utility, logit(pred.prob)) #hmmm...some curvature
 scatter.smooth(logisticData$cost, logit(pred.prob))  #hmmm...some curvature
 
-#Because there appears to be some curvature, we would probably explore the probit or complementary log-log models as alternate models and see if they provide better fits to the data
-  #However, for the sake of this exercise, let's move on to how to interpret the regression output
+# Because there appears to be some curvature, we would probably explore the probit or complementary 
+# log-log models as alternate models and see if they provide better fits to the data
+# However, for the sake of this exercise, let's move on to how to interpret the regression output
 
 
 #########################
@@ -125,9 +141,12 @@ scatter.smooth(logisticData$cost, logit(pred.prob))  #hmmm...some curvature
 #########################
 summary(mod1)
 # From the output, immediately we see that interest, cost, and year 4 are significant
-  # For a one unit increase in interest, there is an increase of 0.71 in the log-odds of reporting being likely to take a modeling course
-  # For a one unit increase in cost, there is a decrease of 0.27 in the log-odds of reporting being likely to take a modeling course
-  # Compared to 1st-year students, fourth year students have a decrease of 0.52 in the log-odds of reporting being likely to take a modeling course
+  # For a one unit increase in interest, there is an increase of 0.71 in the log-odds of reporting 
+      # being likely to take a modeling course
+  # For a one unit increase in cost, there is a decrease of 0.27 in the log-odds of reporting 
+      # being likely to take a modeling course
+  # Compared to 1st-year students, fourth year students have a decrease of 0.52 in the log-odds of 
+      # reporting being likely to take a modeling course
 
 
 # The log-odds coefficients are not intuitive, so let's convert them to odds-ratios
@@ -135,22 +154,37 @@ summary(mod1)
 (odds <- cbind("Odds-Ratio"=exp(mod1$coef), exp(confint(mod1))))
 
 #Looking at the significant variables from the regression output, we can now interpret them as:
-  #For a one unit increase in interest, the odds of a student reporting they are likely to take a mathematical modeling course are 2 times greater than the odds of a student reporting being unlikely to take a modeling course
-    #Or, the odds of a student reporting to be likely to take a mathematical modeling course increase by 100% for every one unit increase in interest 
-  #For a one unit increase in cost, the odds of a student reporting they are likely to take a mathematical modeling course are 0.77 times as great as the odds of a student reporting being unlikely to take a modeling course
-    #Or, the odds of a student reporting to be likely to take a mathematical modeling course decrease by 23% for every unit increase in cost
-  #The odds of a fourth-year student reporting they are likely to take a mathematical modeling course, compared to unlikely to take a mathematical modeling course, are 0.60 times as great as a first-year student
-    #Or, the odds of a fourth-year student reporting they are likely to take a mathematical modeling course are 40% lower than the odds of a first-year student
+  #For a one unit increase in interest, the odds of a student reporting they are likely to take a 
+      # mathematical modeling course are 2 times greater than the odds of a student reporting being 
+      # unlikely to take a modeling course
+    #Or, the odds of a student reporting to be likely to take a mathematical modeling course increase 
+      # by 100% for every one unit increase in interest 
+  #For a one unit increase in cost, the odds of a student reporting they are likely to take a mathematical 
+      # modeling course are 0.77 times as great as the odds of a student reporting being unlikely 
+      # to take a modeling course
+    #Or, the odds of a student reporting to be likely to take a mathematical modeling course decrease by 23% 
+      # for every unit increase in cost
+  #The odds of a fourth-year student reporting they are likely to take a mathematical modeling course, 
+      # compared to unlikely to take a mathematical modeling course, are 0.60 times as great as a first-year student
+    #Or, the odds of a fourth-year student reporting they are likely to take a mathematical modeling course 
+      # are 40% lower than the odds of a first-year student
 
-#You can also convert the odds-ratios less than 1 by using the reciprocal of the odds-ratio; we can see the odds of a student reporting being UNlikely to taking a mathematical modeling course
+#You can also convert the odds-ratios less than 1 by using the reciprocal of the odds-ratio; we can see the 
+  # odds of a student reporting being UNlikely to taking a mathematical modeling course
 (odds.cost <- 1/odds[4])
 (odds.year4 <- 1/odds[8])
 
-#For a one unit increase in cost, the odds of a student reporting they are unlikely to take a mathematical modeling course is 1.3 times greater than the odds of reporting being likely to take a modeling course
-  #Or, the odds of a student reporting to be unlikely to take a mathematical modeling course increase by 30% for every unit increase in cost
-#The odds of a fourth-year student reporting they are unlikely to take a mathematical modeling course, compared to reporting they are likely to take a modeling course, are 1.68 times greater than a first-year student
-  #Or, the odds of a fourth-year student reporting they are unlikely to take a mathematical modeling course are 68% higher than the odds of a first-year student
-  #Or, the odds of a first-year student reporting they are likely to take a mathematical modeling course, compared to reporting they are unlikely to take a modeling course, are 1.68 times higher than the odds of a fourth-year student
+#For a one unit increase in cost, the odds of a student reporting they are unlikely to take a mathematical 
+    # modeling course is 1.3 times greater than the odds of reporting being likely to take a modeling course
+  #Or, the odds of a student reporting to be unlikely to take a mathematical modeling course increase by 30% 
+    # for every unit increase in cost
+#The odds of a fourth-year student reporting they are unlikely to take a mathematical modeling course, compared 
+    # to reporting they are likely to take a modeling course, are 1.68 times greater than a first-year student
+  #Or, the odds of a fourth-year student reporting they are unlikely to take a mathematical modeling course 
+      # are 68% higher than the odds of a first-year student
+  #Or, the odds of a first-year student reporting they are likely to take a mathematical modeling course, 
+    # compared to reporting they are unlikely to take a modeling course, are 1.68 times higher than the 
+    # odds of a fourth-year student
 
 # Taking the reciprocal is the same as changing the reference level of your binary variable
   # For example, we can change the reference of our binary response variable so we are now modeling students 
@@ -182,7 +216,8 @@ mod3 <- glm(course ~ interest + utility + cost + gender + year + high.math,
   summary(mod3)
   
 (odds.3 <- cbind("Odds-Ratio"=exp(mod3$coef), exp(confint(mod3))))
-# The odds for first-year students compared to fourth-year students mirror those described above when we took the reciprocal
+# The odds for first-year students compared to fourth-year students mirror those described 
+  # above when we took the reciprocal
 
 
 # Calculate pseudo-R^2 values
@@ -200,6 +235,8 @@ pR2(mod1)
 # using the sjstats package
 # For Cox and Snell and Nagelkerke pseudo-R2:
 r2(mod1)
+
+# 2021-02-13: None of the code below worked for me. Rewrite the plotting lines with ggplot2
 
 # For Tjur's D:
 cod(mod1)

@@ -1,0 +1,40 @@
+---
+title: "Beyond Linear Regression"
+author: "Elli Theobald, Melissa Aikens, Sarah Eddy, Hannah Jordt"
+subtitle: "Exploring Logistic Regression"
+date: "Spring 2019"
+output:
+  html_document:
+    df_print: paged
+---
+
+## Description: 
+This code uses logistic regression to analyze a binary outcome variable
+
+## Set up
+
+```{r Load Stats Packages, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+# to install packages if they are not already installed:
+install.packages("car")
+install.packages("effects")
+install.packages("pscl")
+install.packages("sjstats")
+```
+
+```{r Load Packages, warning=TRUE, include=FALSE}
+# to load packages:
+library(car) # this is a package to help test the assumptions
+library(effects) # this is a package to help interpret results
+library(pscl) # this package is useful for evaluating model fit
+library(sjstats) # this package is useful for evaluating model fit
+library(here) # enables relative file paths, relative to where the .Rproj file is located
+```
+
+Use the `here` package to implement relative directory paths
+
+```{r Relative Directory Path, message=FALSE, warning=FALSE}
+master_dir = here()
+proj_dir = paste0(master_dir, "/cfcraig-work/")
+```
+
+  

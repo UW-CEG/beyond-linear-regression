@@ -30,6 +30,7 @@ library(sjstats) # this package is useful for evaluating model fit
 library(here) # enables relative file paths, relative to where the .Rproj file is located
 ```
 
+### Set working directory
 Use the `here` package to implement relative directory paths
 
 ```{r Relative Directory Path, message=FALSE, warning=FALSE}
@@ -37,4 +38,69 @@ master_dir = here()
 proj_dir = paste0(master_dir, "/cfcraig-work/")
 ```
 
-  
+### Load, Check, and Clean Data
+```{r Load Data, message=FALSE, warning=FALSE}
+logisticData <- read.csv(paste0(proj_dir, "LogisticData.csv"), header=T)
+  names(logisticData)
+```
+The logistic dataset contains the following 7 variables:
+
+* **interest**: a numeric scale score indicating a student's interest in using mathematics to understand biology; range from 1 (low) - 7 (high)
+* **utility**: a numeric scale score indicating a student's perceptions of how useful mathematics is to their life science career; range from 1 (low) - 7 (high)
+* **cost**: a numeric scale score indicating a student's anxiety/worry over incorporating mathematics into their biology courses; range from 1 (low) - 7 (high)
+* **course**: a binary variable indicating whether a student reports being unlikely (0) or likely (1) to take an elective mathematical modeling course
+* **gender**: a binary variable indicating whether a student is male (M) or female (F)
+* **year**: a categorical variable indicating a student's year in college: 1, 2, 3, or 4
+* **high.math**: a categorical variable indicating the highest high school math course a student took: calculus (Calc), pre-calculus (pCalc), algebra (Alg), or statistics (Stats)
+
+#### Let's examine the data structure:
+
+```{r Data Structure, message=FALSE, warning=FALSE}
+str(logisticData)
+```
+**Note:**
+
+* R considers the binary variable `course` to be an integer (`int`). It's actually categorical, so we need to convert it to a factor
+* Year in school (`year`) is also considered to be integer, but this too should be categorical
+* Binary gender (`gender`) and highest high school math (`high.math`) are factors, but we'll need to make sure to set a meaningful reference level for comparison
+
+#### Convert cataegorical variables to factors
+
+Specify: 
+
+* the binary variable `course` as factor with "0" as the reference variable, and 
+* the categorical variable `year` as a factor with year "1" as the reference level
+* "male" as reference level for `gender` 
+* "calculus" as reference level for `high.math`
+
+```{r Convert categorical variables to factors}
+logisticData$course <- factor(logisticData$course,levels=c(0,1))
+logisticData$year <- factor(logisticData$year,levels=c(1,2,3,4))
+logisticData$gender <- factor(logisticData$gender,levels=c("M","F"))
+logisticData$high.math <- factor(logisticData$high.math,levels=c("Calc","pCalc","Alg","Stats"))
+```
+
+#### Check the data structure again
+```{r}
+str(logisticData)
+
+```
+Looks better!
+
+#### Examine the outcome data 
+```{r}
+
+summary(logisticData$course)
+table(logisticData$gender, logisticData$course)
+table(logisticData$year, logisticData$course)
+table(logisticData$high.math, logisticData$course)
+
+```
+Only a few students with algebra or stats as their highest high school math course, but we'll nevertheless look at it in our model for this exercise.
+
+#### Caveats
+This code does not do the following things, which are worth taking the time to do with any data set before conducting analyses:
+* looking for outliers and checking multicollinearity between predictors
+* removing observations with NAs
+* making lots of different visual plots of the data to become familiar with it
+

@@ -112,7 +112,6 @@ Predict whether a student reports being likely to take a mathematical modeling c
 ```{r Fit Logistic Model}
 mod1 <- glm(course ~ interest + utility + cost + gender + year + high.math,
          data=logisticData, family=binomial(link="logit"))
-summary(mod1)
 
 ```
 
@@ -135,4 +134,32 @@ scatter.smooth(logisticData$cost, logit(pred.prob))  #hmmm...some curvature
 
 
 Because there appears to be some curvature, we would probably explore the probit or complementary log-log models as alternate models and see if they provide better fits to the data. However, for the sake of this exercise, let's move on to how to interpret the regression output.
+
+### Interpret Results 
+```{r}
+summary(mod1)
+
+```
+
+From the output, immediately we see that `interest`, `cost`, and `year4` are significant
+
+* For a one unit increase in interest, there is an increase of 0.71 in the log-odds of reporting being likely to take a modeling course
+* For a one unit increase in cost, there is a decrease of 0.27 in the log-odds of reporting being likely to take a modeling course
+* Compared to 1st-year students, fourth year students have a decrease of 0.52 in the log-odds of reporting being likely to take a modeling course
+
+
+The log-odds coefficients are not intuitive, so let's convert them to odds-ratios. We'll also compute 95% confidence intervals based on profile-likelihood limits
+
+```{r}
+(odds <- cbind("Odds-Ratio"=exp(mod1$coef), exp(confint(mod1))))
+
+```
+Looking at the significant variables from the regression output, we can now interpret them as:
+
+* For a one unit increase in interest, the odds of a student reporting they are likely to take a mathematical modeling course are 2 times greater than the odds of a student reporting being unlikely to take a modeling course
+  * Or, the odds of a student reporting to be likely to take a mathematical modeling course increase by 100% for every one unit increase in interest 
+* For a one unit increase in cost, the odds of a student reporting they are likely to take a mathematical  modeling course are 0.77 times as great as the odds of a student reporting being unlikely to take a modeling course
+  * Or, the odds of a student reporting to be likely to take a mathematical modeling course decrease by 23% for every unit increase in cost
+* The odds of a fourth-year student reporting they are likely to take a mathematical modeling course, compared to unlikely to take a mathematical modeling course, are 0.60 times as great as a first-year student
+  * Or, the odds of a fourth-year student reporting they are likely to take a mathematical modeling course are 40% lower than the odds of a first-year student
 

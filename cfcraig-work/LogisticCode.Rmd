@@ -104,3 +104,35 @@ This code does not do the following things, which are worth taking the time to d
 * removing observations with NAs
 * making lots of different visual plots of the data to become familiar with it
 
+
+### Fit Logisitic Model
+
+Predict whether a student reports being likely to take a mathematical modeling course based on interest, utility value, cost, gender, year in school, and highest high school math course taken
+
+```{r Fit Logistic Model}
+mod1 <- glm(course ~ interest + utility + cost + gender + year + high.math,
+         data=logisticData, family=binomial(link="logit"))
+summary(mod1)
+
+```
+
+### Test Model Assumptions
+
+#### Assumption 1: the log-odds of the outcome is linearly related to the continuous predictor variables
+ 
+Check each continuous variable graphically
+
+Calculate predicted probabilities of model & create smooth scatterplot of logit of predicted values against continuous predictors (Hosmer et al., 2013). Predicted values with type="response" are the y-values predicted by the regression model. The predicted values obtained this way are identical to fitted values obtain by using the code: `fitted(mod1)`
+
+```{r}
+
+pred.prob <- predict(mod1, type = "response")
+scatter.smooth(logisticData$interest, logit(pred.prob)) #looks good
+scatter.smooth(logisticData$utility, logit(pred.prob)) #hmmm...some curvature
+scatter.smooth(logisticData$cost, logit(pred.prob))  #hmmm...some curvature
+
+```
+
+
+Because there appears to be some curvature, we would probably explore the probit or complementary log-log models as alternate models and see if they provide better fits to the data. However, for the sake of this exercise, let's move on to how to interpret the regression output.
+

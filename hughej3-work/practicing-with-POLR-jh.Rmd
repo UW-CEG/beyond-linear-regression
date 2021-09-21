@@ -1,0 +1,58 @@
+---
+title: "Practicing with POLR"
+author: "Jackson Hughes"
+date: "9/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages("MASS")
+install.packages("effects")
+install.packages("nnet")
+install.packages("Hmisc")
+
+library(MASS)
+library(effects)
+library(nnet)
+library(Hmisc)
+library(tidyverse)
+```
+
+### Import data
+
+```{r}
+setwd("G:/Shared drives/CEG Two-Stage Exams Analysis/Jackson/beyond-linear-regression/BeyondLinearRegression/Proportional Odds Logistic Regression")
+polrData <- read_csv("polrData.csv")
+```
+
+### View data
+
+```{r}
+tibble(polrData)
+```
+
+### Visualize data
+
+```{r}
+hist(polrData$Dominator)
+summary(polrData$Dominator)
+```
+
+### Assign `Dominator` as factor; relevel `Ethnicity` so that the reference is white students
+
+```{r}
+polrData$Dominator <- factor(polrData$Dominator)
+polrData$Ethnicity <- relevel(as.factor(polrData$Ethnicity), ref="White")
+```
+
+### Model selection: start with most complex model
+
+```{r}
+mod1 <- polr(Dominator ~ Gender + FirstGeneration + CourseGrade + Ethnicity +
+             ActivityType +  
+             Gender*ActivityType + FirstGeneration*ActivityType + Ethnicity*ActivityType, 
+             data=polrData, Hess=T)
+summary(mod1)
+```
+

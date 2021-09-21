@@ -151,3 +151,7 @@ plot(GradedomEff, style="stacked", ylab="Probability of Response", xlab= "Course
      main="Effect of Course Grade on Reporting a Dominator")
 ```
 
+### Notes/Questions
+* I don't know where to find the t-values of the interactions in the summary tables for the POLR models; they don't seem to be labeled.
+* I had to make `Ethnicity` a factor rather than a character value in order to relevel it to set the reference group as white students. It seems like I still got valid results... is this okay?
+* What does censored regression look like in R?

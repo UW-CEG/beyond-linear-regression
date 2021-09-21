@@ -2,16 +2,13 @@
 title: "Practicing with POLR"
 author: "Jackson Hughes"
 date: "9/21/2021"
-output: html_document
+output: 
+  html_document:
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-install.packages("MASS")
-install.packages("effects")
-install.packages("nnet")
-install.packages("Hmisc")
-
 library(MASS)
 library(effects)
 library(nnet)

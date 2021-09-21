@@ -56,3 +56,28 @@ mod1 <- polr(Dominator ~ Gender + FirstGeneration + CourseGrade + Ethnicity +
 summary(mod1)
 ```
 
+* According to Elli Theobald's demonstration, we should remove the `First Generation*Activity Type` interaction because it has the t-value that's closest to zero. Where in the model summary do I find the t-value for this interaction?
+* At the end of Theobald's model selection process, she ends up with the following best-fit model:
+
+```{r}
+mod6 <- polr(Dominator ~  CourseGrade + Ethnicity +
+             ActivityType, 
+             data=polrData, Hess=T)
+summary(mod6)
+```
+
+### Testing model assumptions
+
+#### Assumption 1: are the categories ordered?
+
+```{r}
+MultiNomMod <- multinom(Dominator ~ CourseGrade + Ethnicity + 
+                        ActivityType,
+                        data = polrData)
+AIC(MultiNomMod, mod6)
+```
+
+* `mod6` is better fitting than the multinomial model, which indicates that the assumption that categories are ordered is correct.
+
+#### Assumption 2:
+

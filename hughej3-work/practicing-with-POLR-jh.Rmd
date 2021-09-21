@@ -79,5 +79,75 @@ AIC(MultiNomMod, mod6)
 
 * `mod6` is better fitting than the multinomial model, which indicates that the assumption that categories are ordered is correct.
 
-#### Assumption 2:
+#### Assumption 2: are the log-odds between each level proportional?
+
+```{r}
+sf <- function(y) {
+  c('Y>=1' = qlogis(mean(y >= 1)),
+    'Y>=2' = qlogis(mean(y >= 2)),
+    'Y>=3' = qlogis(mean(y >= 3)),
+    'Y>=4' = qlogis(mean(y >= 4)),
+    'Y>=5' = qlogis(mean(y >= 5)),
+    'Y>=6' = qlogis(mean(y >= 6)))
+}
+
+(s <- with(polrData, summary(as.numeric(Dominator) ~ CourseGrade + Ethnicity + 
+                             ActivityType, fun=sf)))
+```
+
+##### Compare the transitions between the values of each outcome
+
+```{r}
+s[, 7] <- s[, 7] - s[, 6]
+s[, 6] <- s[, 6] - s[, 5]
+s[, 5] <- s[, 5] - s[, 4]
+s[, 4] <- s[, 4] - s[, 3] 
+s[, 3] <- s[, 3] - s[, 3]
+s
+```
+
+* According to Theobald, these values look "relatively reasonable", and "the direction is the same for each row," which upholds assumption #2.
+* At what point would we consider the values to not be reasonable?
+
+### Interpret the results
+
+```{r}
+summary(mod6)
+```
+
+* This table is hard to interpret because it's in terms of log odds: the log odds of answering one level higher is -0.5715 that of the log odds on the constructive activity.
+
+#### Convert coefficients to odds by exponentiating
+
+```{r}
+exp(cbind(OR = coef(mod6), confint(mod6)))
+```
+
+* This data is now in terms of odds rather than log-odds. The `OR` column tells us the odds of answering one higher level in the Likert-scale that someone "dominated" the students' groups based on five different predictor variables.
+
+### Visualize the data
+
+#### Plot of the effect of treatment on reporting a dominator
+
+```{r}
+domEff <- Effect("ActivityType",mod6)
+plot(domEff, style="stacked", ylab="Probability of Response", xlab= "Treatment", 
+     main="Effect of Treatment on Reporting a Dominator")
+```
+
+#### Plot of the effect of ethnicity on reporting a dominator
+
+```{r}
+EthnicitydomEff <- Effect("Ethnicity",mod6)
+plot(EthnicitydomEff, style="stacked", ylab="Probability of Response", xlab= "Ethnicity", 
+     main="Effect of Ethnicity on Reporting a Dominator")
+```
+
+#### Plot of the effect of course grade on reporting a dominator
+
+```{r}
+GradedomEff <- Effect("CourseGrade",mod6)
+plot(GradedomEff, style="stacked", ylab="Probability of Response", xlab= "Course Grade", 
+     main="Effect of Course Grade on Reporting a Dominator")
+```
 

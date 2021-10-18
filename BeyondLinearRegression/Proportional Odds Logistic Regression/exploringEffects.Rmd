@@ -66,6 +66,13 @@ x <- as.data.frame(domEff)
 x
 ```
 
+### Now let's try plotting the data...
 
+```{r}
+domEff <- Effect("ActivityType",m)
+plot(domEff, style="stacked", ylab="Probability of Response", xlab= "Treatment", 
+     main="Effect of Treatment on Reporting a Dominator")
+```
 
+#### I tried to recreate this plot using `ggplot` and the effects data frame instead of `plot` and the effects list, but I couldn't figure it out.
 

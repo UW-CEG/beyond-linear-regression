@@ -57,4 +57,15 @@ domEff <- Effect("ActivityType",m)
 summary(domEff)
 ```
 
-#### I think this table shows us
+#### The odds ratios have been converted to probabilities, which is extremely helpful in interpreting the output! For instance, we can see that the probability of students in the constructive activity type answering "strongly disagree" is less than that of students in the interactive activity type.
+
+### We can convert the effects list to a data frame:
+
+```{r}
+x <- as.data.frame(domEff)
+x
+```
+
+
+
+

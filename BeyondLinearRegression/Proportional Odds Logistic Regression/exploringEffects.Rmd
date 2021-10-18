@@ -1,0 +1,60 @@
+---
+title: "Exploring the effects package"
+author: "Jackson Hughes"
+date: "10/18/2021"
+output: 
+  html_document:
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(MASS)
+library(effects)
+library(nnet)
+library(Hmisc)
+library(tidyverse)
+```
+
+### Import data
+
+```{r}
+setwd("G:/Shared drives/CEG Two-Stage Exams Analysis/Jackson/beyond-linear-regression/BeyondLinearRegression/Proportional Odds Logistic Regression")
+polrData <- read_csv("polrData.csv")
+```
+
+### I will be exploring the `effects` package using the POLR data from the "beyond linear regression" repository
+
+### Assign `Dominator` as factor; relevel `Ethnicity` so that the reference is white students
+
+```{r}
+polrData$Dominator <- factor(polrData$Dominator)
+polrData$Ethnicity <- relevel(as.factor(polrData$Ethnicity), ref="White")
+```
+
+### Following Theobald's model selection, we ended up with the following model:
+
+```{r}
+m <- polr(Dominator ~  CourseGrade + Ethnicity +
+             ActivityType, 
+             data=polrData, Hess=T)
+summary(m)
+```
+
+### Convert log odds to odds by exponentiating
+
+```{r}
+exp(cbind(OR = coef(m), confint(m)))
+```
+
+### The `OR` column represents the odds of answering one higher level in the Likert-scale that there was a "dominator" in the group as opposed to the relevant reference groups.
+
+### Now let's finally explore the `effects` package.
+### The effect of treatment on reporting a dominator:
+
+```{r}
+domEff <- Effect("ActivityType",m)
+summary(domEff)
+```
+
+#### I think this table shows us
